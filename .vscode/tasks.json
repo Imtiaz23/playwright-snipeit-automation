@@ -7,7 +7,7 @@
 			"command": "dotnet",
 			"args": [
 				"test",
-				"tests/PlaywrightAutomation.Tests/PlaywrightAutomation.Tests.csproj",
+				"PlaywrightTests.csproj",
 				"--verbosity",
 				"normal"
 			],
