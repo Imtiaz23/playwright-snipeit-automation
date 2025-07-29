@@ -1,0 +1,38 @@
+{
+  "use": {
+    "baseURL": "https://demo.snipeitapp.com",
+    "trace": "on-first-retry",
+    "screenshot": "only-on-failure",
+    "video": "retain-on-failure",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "ignoreHTTPSErrors": true,
+    "actionTimeout": 30000,
+    "navigationTimeout": 30000
+  },
+  "projects": [
+    {
+      "name": "chromium",
+      "use": {
+        "browserName": "chromium",
+        "headless": false,
+        "slowMo": 1000
+      }
+    }
+  ],
+  "reporter": [
+    ["html", { "outputFolder": "playwright-report" }],
+    ["json", { "outputFile": "test-results.json" }],
+    ["junit", { "outputFile": "test-results.xml" }]
+  ],
+  "outputDir": "test-results",
+  "timeout": 60000,
+  "expect": {
+    "timeout": 10000
+  },
+  "fullyParallel": false,
+  "workers": 1,
+  "retries": 1
+}

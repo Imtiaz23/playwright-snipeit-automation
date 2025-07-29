@@ -1,0 +1,90 @@
+name: .NET Playwright Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
+    - name: Install Playwright Browsers
+      run: |
+        cd src/PlaywrightAutomation
+        dotnet build
+        pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+        
+    - name: Run Tests
+      run: dotnet test --no-build --verbosity normal --logger trx --results-directory TestResults
+      
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+        
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-screenshots
+        path: tests/PlaywrightAutomation.Tests/bin/Debug/net8.0/screenshots/
+        
+    - name: Upload Videos
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-videos
+        path: tests/PlaywrightAutomation.Tests/bin/Debug/net8.0/videos/
+
+  build-windows:
+    timeout-minutes: 60
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
+    - name: Install Playwright Browsers
+      run: |
+        cd src/PlaywrightAutomation
+        dotnet build
+        pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+        
+    - name: Run Tests
+      run: dotnet test --no-build --verbosity normal --logger trx --results-directory TestResults
+      
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-windows
+        path: TestResults/
