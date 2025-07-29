@@ -1,12 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Playwright;
 using PlaywrightAutomation.Configuration;
-using PlaywrightAutomation.Models;
 
 namespace PlaywrightAutomation.Pages;
 
 public class AssetsPage : BasePage
 {
-    // Selectors
     private const string CreateAssetButton = "a[href*='hardware/create']";
     private const string AssetTable = ".table-responsive table";
     private const string AssetRows = "tbody tr";
@@ -21,43 +22,48 @@ public class AssetsPage : BasePage
         await WaitForElementAsync(AssetTable);
     }
 
-    public async Task ClickCreateAssetAsync()
+    public async Task ClickCreateAssetAsync() => await ClickAsync(CreateAssetButton);
+
+    public async Task<bool> IsOnAssetsPageAsync()
     {
-        await ClickAsync(CreateAssetButton);
+        return await IsVisibleAsync(AssetTable);
     }
 
     public async Task SearchForAssetAsync(string searchTerm)
     {
         await FillAsync(SearchInput, searchTerm);
         await Page.Keyboard.PressAsync("Enter");
-        
-        // Wait for search results to load
-        await Page.WaitForTimeoutAsync(2000);
+        await Task.Delay(2000); // Wait for search results
+    }
+
+    public async Task ClickAssetLinkAsync(string assetTag)
+    {
+        var assetRow = Page.Locator($"tr:has-text('{assetTag}')");
+        await assetRow.Locator("a").First.ClickAsync();
     }
 
     public async Task<bool> IsAssetVisibleInListAsync(string assetTag)
     {
-        await SearchForAssetAsync(assetTag);
+        await FillAsync(SearchInput, assetTag);
+        await Page.Keyboard.PressAsync("Enter");
+        await Page.WaitForTimeoutAsync(2000);
         
         var assetRows = Page.Locator(AssetRows);
         var count = await assetRows.CountAsync();
         
         for (int i = 0; i < count; i++)
         {
-            var row = assetRows.Nth(i);
-            var text = await row.TextContentAsync();
-            if (text != null && text.Contains(assetTag))
-            {
-                return true;
-            }
+            var text = await assetRows.Nth(i).TextContentAsync();
+            if (text?.Contains(assetTag) == true) return true;
         }
-        
         return false;
     }
 
     public async Task ClickAssetByTagAsync(string assetTag)
     {
-        await SearchForAssetAsync(assetTag);
+        await FillAsync(SearchInput, assetTag);
+        await Page.Keyboard.PressAsync("Enter");
+        await Page.WaitForTimeoutAsync(2000);
         
         var assetRows = Page.Locator(AssetRows);
         var count = await assetRows.CountAsync();
@@ -66,15 +72,13 @@ public class AssetsPage : BasePage
         {
             var row = assetRows.Nth(i);
             var text = await row.TextContentAsync();
-            if (text != null && text.Contains(assetTag))
+            if (text?.Contains(assetTag) == true)
             {
-                var link = row.Locator(AssetLink).First;
-                await link.ClickAsync();
+                await row.Locator(AssetLink).First.ClickAsync();
                 return;
             }
         }
-        
-        throw new InvalidOperationException($"Asset with tag {assetTag} not found in the list");
+        throw new InvalidOperationException($"Asset with tag {assetTag} not found");
     }
 
     public async Task<List<string>> GetAssetTagsFromCurrentPageAsync()
@@ -85,15 +89,9 @@ public class AssetsPage : BasePage
         
         for (int i = 0; i < count; i++)
         {
-            var row = assetRows.Nth(i);
-            var firstCell = row.Locator("td").First;
-            var text = await firstCell.TextContentAsync();
-            if (!string.IsNullOrEmpty(text))
-            {
-                assetTags.Add(text.Trim());
-            }
+            var text = await assetRows.Nth(i).Locator("td").First.TextContentAsync();
+            if (!string.IsNullOrEmpty(text)) assetTags.Add(text.Trim());
         }
-        
         return assetTags;
     }
 }

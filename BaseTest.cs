@@ -1,8 +1,11 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Playwright;
 using NUnit.Framework;
 using PlaywrightAutomation.Configuration;
 
-namespace PlaywrightAutomation.Tests;
+namespace PlaywrightAutomation;
 
 [TestFixture]
 public abstract class BaseTest
@@ -20,7 +23,7 @@ public abstract class BaseTest
         Browser = await Playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions 
         { 
             Headless = false,
-            SlowMo = 1000 // Increased delay for better visibility during debugging
+            SlowMo = 1000
         });
         
         BrowserContext = await Browser.NewContextAsync(new BrowserNewContextOptions
@@ -30,15 +33,7 @@ public abstract class BaseTest
             RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 }
         });
         
-        // Enable request/response logging for debugging
-        BrowserContext.Request += (sender, request) => 
-        {
-            Console.WriteLine($"Request: {request.Method} {request.Url}");
-        };
-        
         Page = await BrowserContext.NewPageAsync();
-        
-        // Set default timeouts
         Page.SetDefaultTimeout(TestConfiguration.Timeouts.DefaultTimeout);
         Page.SetDefaultNavigationTimeout(TestConfiguration.Timeouts.DefaultTimeout);
     }
@@ -46,38 +41,22 @@ public abstract class BaseTest
     [OneTimeTearDown]
     public async Task OneTimeTearDownAsync()
     {
-        if (Page != null)
-        {
-            await Page.CloseAsync();
-        }
-        
-        if (BrowserContext != null)
-        {
-            await BrowserContext.CloseAsync();
-        }
-        
-        if (Browser != null)
-        {
-            await Browser.CloseAsync();
-        }
-        
+        await Page?.CloseAsync();
+        await BrowserContext?.CloseAsync();
+        await Browser?.CloseAsync();
         Playwright?.Dispose();
     }
 
     [SetUp]
     public async Task SetUpAsync()
     {
-        // Clear any existing sessions/cookies before each test
-        if (BrowserContext != null)
-        {
-            await BrowserContext.ClearCookiesAsync();
-        }
+        Directory.CreateDirectory("screenshots");
+        Directory.CreateDirectory("videos");
     }
 
     [TearDown]
     public async Task TearDownAsync()
     {
-        // Take screenshot on test failure
         if (TestContext.CurrentContext.Result.Outcome.Status == NUnit.Framework.Interfaces.TestStatus.Failed)
         {
             if (Page != null)
@@ -89,17 +68,5 @@ public abstract class BaseTest
                 Console.WriteLine($"Screenshot saved: {fileName}");
             }
         }
-    }
-
-    protected async Task NavigateToAsync(string url)
-    {
-        if (Page == null) throw new InvalidOperationException("Page is not initialized");
-        await Page.GotoAsync(url);
-    }
-
-    protected async Task WaitForElementAsync(string selector)
-    {
-        if (Page == null) throw new InvalidOperationException("Page is not initialized");
-        await Page.WaitForSelectorAsync(selector);
     }
 }
