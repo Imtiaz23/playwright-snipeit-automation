@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using FluentAssertions;
+using Microsoft.Playwright;
 using PlaywrightAutomation.Pages;
 using PlaywrightAutomation.Utils;
 using PlaywrightAutomation.Models;
@@ -17,15 +18,17 @@ public class SnipeITTests : BaseTest
     private AssetDetailsPage? assetDetailsPage;
     private string? createdAssetTag;
 
-    [OneTimeSetUp]
+    [SetUp]
     public async Task ClassSetUpAsync()
     {
-        await base.OneTimeSetUpAsync();
-        
-        loginPage = new LoginPage(Page!);
-        assetsPage = new AssetsPage(Page!);
-        createAssetPage = new CreateAssetPage(Page!);
-        assetDetailsPage = new AssetDetailsPage(Page!);
+        // Initialize page objects only once when Page is available
+        if (loginPage == null)
+        {
+            loginPage = new LoginPage(Page!);
+            assetsPage = new AssetsPage(Page!);
+            createAssetPage = new CreateAssetPage(Page!);
+            assetDetailsPage = new AssetDetailsPage(Page!);
+        }
     }
 
     [Test, Order(1)]
@@ -43,16 +46,26 @@ public class SnipeITTests : BaseTest
     }
 
     [Test, Order(2)]
-    public async Task Test2_NavigateToAssets()
+    public async Task Test2_NavigateToCreateAsset()
     {
-        Console.WriteLine("Starting Test 2: Navigate to Assets");
+        Console.WriteLine("Starting Test 2: Navigate to Create Asset");
         
-        await assetsPage!.NavigateToAssetsAsync();
+        // Wait for the "Create New" dropdown button to be visible before clicking
+        await Page!.WaitForSelectorAsync("a.dropdown-toggle[data-toggle='dropdown']:has-text('Create New')", new() { State = WaitForSelectorState.Visible });
+        await Page.ClickAsync("a.dropdown-toggle[data-toggle='dropdown']:has-text('Create New')");
         
-        var isOnAssetsPage = await assetsPage.IsOnAssetsPageAsync();
-        isOnAssetsPage.Should().BeTrue("Should successfully navigate to assets page");
+        // Wait for dropdown menu to appear and Asset option to be visible before clicking
+        await Page.WaitForSelectorAsync("a[href*='hardware/create']:has-text('Asset')", new() { State = WaitForSelectorState.Visible });
+        await Page.ClickAsync("a[href*='hardware/create']:has-text('Asset')");
         
-        Console.WriteLine("Test 2 completed: Successfully navigated to Assets page");
+        // Wait for navigation to complete
+        await Page.WaitForLoadStateAsync();
+        
+        // Verify we're on the create asset page
+        var isOnCreateAssetPage = await createAssetPage!.IsOnCreateAssetPageAsync();
+        isOnCreateAssetPage.Should().BeTrue("Should successfully navigate to create asset page");
+        
+        Console.WriteLine("Test 2 completed: Successfully navigated to Create Asset page");
     }
 
     [Test, Order(3)]
@@ -60,10 +73,9 @@ public class SnipeITTests : BaseTest
     {
         Console.WriteLine("Starting Test 3: Create Asset");
         
-        await assetsPage!.ClickCreateAssetAsync();
-        
+        // We should already be on the create asset page from Test2
         var isOnCreateAssetPage = await createAssetPage!.IsOnCreateAssetPageAsync();
-        isOnCreateAssetPage.Should().BeTrue("Should navigate to create asset page");
+        isOnCreateAssetPage.Should().BeTrue("Should be on create asset page from previous test");
         
         var testAsset = TestData.GenerateAsset();
         await createAssetPage.FillAssetFormAsync(testAsset);

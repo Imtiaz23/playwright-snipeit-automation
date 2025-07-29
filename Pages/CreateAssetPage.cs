@@ -7,7 +7,7 @@ namespace PlaywrightAutomation.Pages;
 
 public class CreateAssetPage : BasePage
 {
-    private const string AssetTagInput = "input[name='asset_tag']";
+    private const string AssetTagInput = ".form-group #asset_tag";
     private const string ModelSelect = "select[name='model_id']";
     private const string StatusSelect = "select[name='status_id']";
     private const string CheckoutToSelect = "select[name='assigned_user']";
@@ -62,7 +62,7 @@ public class CreateAssetPage : BasePage
     public async Task FillAssetFormAsync(Asset asset)
     {
         await FillAsync(AssetTagInput, asset.AssetTag);
-        await FillAsync(ModelSelect, "Laptop");
+        await Page.SelectOptionAsync(ModelSelect, "Laptop");
         await FillAsync(SerialInput, asset.SerialNumber);
         await FillAsync(PurchaseDateInput, asset.PurchaseDate.ToString("yyyy-MM-dd"));
         await FillAsync(PurchaseCostInput, asset.PurchaseCost.ToString());

@@ -29,7 +29,7 @@ public abstract class BaseTest
         BrowserContext = await Browser.NewContextAsync(new BrowserNewContextOptions
         {
             ViewportSize = new ViewportSize { Width = 1920, Height = 1080 },
-            RecordVideoDir = "videos/",
+            RecordVideoDir = Path.Combine("bin", "Debug", "net8.0", "videos"),
             RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 }
         });
         
@@ -51,7 +51,7 @@ public abstract class BaseTest
     public async Task SetUpAsync()
     {
         Directory.CreateDirectory("screenshots");
-        Directory.CreateDirectory("videos");
+        Directory.CreateDirectory(Path.Combine("bin", "Debug", "net8.0", "videos"));
     }
 
     [TearDown]
