@@ -51,17 +51,35 @@ pwsh bin/Debug/net8.0/playwright.ps1 install chromium
 
 ## 🧪 Running Tests
 
-### Run Tests
+### Quick Start (Recommended)
+Use the provided scripts for the best experience:
+
+**Windows PowerShell/Command Prompt:**
 ```bash
-dotnet test PlaywrightTests.csproj --logger "trx;LogFileName=TestResults.trx" --logger "html;LogFileName=TestResults.html" --verbosity normal
+# PowerShell
+.\run-tests.ps1
+
+# Command Prompt
+run-tests.bat
 ```
+
+**Cross-platform:**
+```bash
+dotnet test PlaywrightTests.csproj --logger "trx;LogFileName=TestResults.trx" --logger "html;LogFileName=TestResults.html" --verbosity normal --settings test.runsettings
+```
+
+### VS Code Integration
+- Press `Ctrl+Shift+P` → "Tasks: Run Task" → "Run SnipeIT Tests"
+- Or use the Terminal → Run Task menu
 
 ### Test Cases
 1. **Test1_Login**: Authenticates user and verifies successful login
 2. **Test2_NavigateToCreateAsset**: Navigates to asset creation page via dropdown menu
 3. **Test3_CreateAsset**: Creates a new asset with generated test data
-4. **Test4_ViewAssetDetails**: Searches for and views the created asset
-5. **Test5_DeleteAsset**: Deletes the created asset
+4. **Test4_ViewAssetDetails**: Verifies asset appears in recent activity dashboard
+5. **Test5_SearchAndVerifyAsset**: Searches for asset and verifies details in assets page
+6. **Test6_VerifyAssetDetailsPage**: Validates asset details page elements
+7. **Test7_VerifyAssetHistory**: Checks asset history with 2 expected entries
 
 ## 📊 Test Reports and Artifacts
 

@@ -8,6 +8,10 @@
 			"args": [
 				"test",
 				"PlaywrightTests.csproj",
+				"--logger",
+				"trx;LogFileName=TestResults.trx",
+				"--logger",
+				"html;LogFileName=TestResults.html",
 				"--verbosity",
 				"normal"
 			],
