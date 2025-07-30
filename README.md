@@ -26,8 +26,11 @@ Verify installation:
 dotnet --version
 ```
 
-### 2. Playwright Browsers
-Playwright browsers will be installed automatically when you first run the tests.
+### 2. PowerShell (Windows users)
+- **Windows 10/11**: Already included
+- **Older Windows**: Download PowerShell 7+ from [Microsoft PowerShell](https://github.com/PowerShell/PowerShell)
+
+**Note**: Playwright browsers will be installed automatically when you first run the tests.
 
 ## � Setup Instructions
 
@@ -106,13 +109,6 @@ Edit `Configuration/TestConfiguration.cs` to modify:
 - Base URL
 - Login credentials
 - Timeouts
-
-### Playwright Configuration
-Edit `playwright.config.json` to modify:
-- Browser settings
-- Video recording options
-- Screenshot settings
-
 ## 📁 Project Structure
 
 ```
