@@ -20,12 +20,42 @@ public class AssetDetailsPage : BasePage
     private const string SerialNumberLabel = "dt:has-text('Serial') + dd";
     private const string HistoryTab = "a[href*='#history']";
     private const string HistoryRows = "#history table tbody tr";
+    
+    // New selectors for the specific verification steps
+    private const string AssetDetailsPageIndicator = ".btn.btn-sm.btn-warning.btn-social.btn-block.hidden-print";
+    private const string CopyAssetTagElement = ".js-copy-assettag";
 
     public AssetDetailsPage(IPage page) : base(page) { }
 
     public async Task<bool> IsOnAssetDetailsPageAsync()
     {
         return await IsVisibleAsync(AssetTag);
+    }
+
+    public async Task<bool> VerifyAssetDetailsPageAsync()
+    {
+        // Step 3: Verify asset details page by waiting for the specific element
+        try
+        {
+            await WaitForElementAsync(AssetDetailsPageIndicator, 10000);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<(string assetTag, string status, string model)> GetSpecificAssetDetailsAsync()
+    {
+        // Step 4: Get asset details from the page
+        await WaitForElementAsync(CopyAssetTagElement, 10000);
+        
+        var assetTag = await Page.Locator(CopyAssetTagElement).TextContentAsync() ?? "";
+        var status = await Page.Locator(StatusLabel).TextContentAsync() ?? "";
+        var model = await Page.Locator(ModelLabel).TextContentAsync() ?? "";
+        
+        return (assetTag.Trim(), status.Trim(), model.Trim());
     }
 
     public async Task<string> GetAssetTagAsync()

@@ -11,8 +11,9 @@ public class AssetsPage : BasePage
     private const string CreateAssetButton = "a[href*='hardware/create']";
     private const string AssetTable = ".table-responsive table";
     private const string AssetRows = "tbody tr";
-    private const string SearchInput = "input[type='search']";
+    private const string SearchInput = ".pull-right.search.input-group .form-control.search-input";
     private const string AssetLink = "td a[href*='/hardware/']";
+    private const string TableBody = "tbody";
 
     public AssetsPage(IPage page) : base(page) { }
 
@@ -93,5 +94,46 @@ public class AssetsPage : BasePage
             if (!string.IsNullOrEmpty(text)) assetTags.Add(text.Trim());
         }
         return assetTags;
+    }
+
+    public async Task SearchForAssetWithSpecificInputAsync(string assetTag)
+    {
+        // Step 1: Search using the specific search input element
+        await WaitForElementAsync(SearchInput, 10000);
+        await FillAsync(SearchInput, assetTag);
+        
+        // Wait 5 seconds as specified
+        await Page.WaitForTimeoutAsync(5000);
+    }
+
+    public async Task<(string assetTag, string model, string status)> VerifyAssetInTableAsync(string expectedAssetTag)
+    {
+        // Step 2: Verify there's only one row and check td elements
+        await WaitForElementAsync(TableBody, 10000);
+        var rows = Page.Locator($"{TableBody} tr");
+        var rowCount = await rows.CountAsync();
+        
+        if (rowCount != 1)
+        {
+            throw new Exception($"Expected 1 row in search results, but found {rowCount}");
+        }
+
+        var row = rows.First;
+        var cells = row.Locator("td");
+        
+        // Get the asset tag, model, and status from the table
+        var assetTag = await cells.Nth(0).TextContentAsync() ?? "";
+        var model = await cells.Nth(1).TextContentAsync() ?? "";
+        var status = await cells.Nth(2).TextContentAsync() ?? "";
+        
+        return (assetTag.Trim(), model.Trim(), status.Trim());
+    }
+
+    public async Task ClickAssetTagInTableAsync()
+    {
+        // Step 3: Click on the asset tag shown in table data
+        var firstRow = Page.Locator($"{TableBody} tr").First;
+        var assetTagLink = firstRow.Locator("td").First.Locator("a");
+        await assetTagLink.ClickAsync();
     }
 }
