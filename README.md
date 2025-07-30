@@ -39,9 +39,7 @@ pwsh bin/Debug/net8.0/playwright.ps1 install chromium
 
 # Step 4: Run tests
 dotnet test PlaywrightTests.csproj --logger "trx;LogFileName=TestResults.trx" --logger "html;LogFileName=TestResults.html" --verbosity normal --settings test.runsettings
-```tructionsNET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
-[![Playwright](https://img.shields.io/badge/Playwright-1.47.0-green.svg)](https://playwright.dev/)
-[![NUnit](https://img.shields.io/badge/NUnit-4.2.2-blue.svg)](https://nunit.org/)
+
 
 A comprehensive .NET 8 Playwright automation project that tests the [SnipeIT demo application](https://develop.snipeitapp.com/) using modern C# practices and industry-standard test automation patterns.
 
@@ -79,20 +77,9 @@ dotnet --version
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Imtiaz23/playwright-snipeit-automation.git
-cd playwright-snipeit-automation
-```
-
-### 2. Restore Dependencies
-```bash
-dotnet restore
-```
-
-### 3. Install Playwright Browsers (Optional)
-```bash
-# Browsers will install automatically, but you can pre-install them:
-dotnet build
-pwsh bin/Debug/net8.0/playwright.ps1 install chromium
+git clone https://github.com/Imtiaz23/playwright-snipeit-automation.git (or #download zip and extract)
+<span style="color: blue;">### 2. Navigate to directory with powershell</span>
+cd playwright-snipeit-automation-main
 ```
 
 ## 🧪 Running Tests
@@ -100,21 +87,31 @@ pwsh bin/Debug/net8.0/playwright.ps1 install chromium
 ### Quick Start (Recommended)
 Use the provided scripts for the best experience:
 
-**Windows PowerShell/Command Prompt:**
+**Windows PowerShell**
 ```bash
 # PowerShell (Recommended - handles everything automatically)
 .\run-tests.ps1
 
-# Command Prompt
-run-tests.bat
+# or
+.\run-tests.bat
 ```
 
 **Cross-platform (Manual):**
 ```bash
+# Step 1: Restore and build
+dotnet restore
+dotnet build
+
+# Step 2: Install Playwright browsers (REQUIRED - one-time setup)
+pwsh bin/Debug/net8.0/playwright.ps1 install chromium
+
+# Step 3: Run tests
 dotnet test PlaywrightTests.csproj --logger "trx;LogFileName=TestResults.trx" --logger "html;LogFileName=TestResults.html" --verbosity normal --settings test.runsettings
 ```
 
 **Note**: The scripts handle all setup automatically including NuGet restore, build, and Playwright browser installation.
+
+⚠️ **Important**: If using the manual cross-platform commands, you MUST install Playwright browsers first, or tests will fail.
 
 ### VS Code Integration
 - Press `Ctrl+Shift+P` → "Tasks: Run Task" → "Run SnipeIT Tests"
