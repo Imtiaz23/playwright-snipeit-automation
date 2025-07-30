@@ -1,18 +1,61 @@
 # SnipeIT Playwright Automation
+## 🚀 Quick Start (One Command Setup)
 
-[![## 🛠 Setup InstructionsNET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Imtiaz23/playwright-snipeit-automation.git
+cd playwright-snipeit-automation
+```
+
+### 2. Run Tests (Everything Automated!)
+**Windows users can simply run:**
+```bash
+# PowerShell (Recommended)
+.\run-tests.ps1
+
+# Command Prompt
+run-tests.bat
+```
+
+**That's it!** The scripts will automatically:
+- ✅ Restore NuGet packages (`dotnet restore`)
+- ✅ Build the project (`dotnet build`)  
+- ✅ Install Playwright browsers (first run only)
+- ✅ Run all tests with comprehensive reporting
+- ✅ Generate HTML and TRX reports
+
+### Manual Setup (Optional)
+If you prefer manual control:
+
+```bash
+# Step 1: Restore dependencies
+dotnet restore
+
+# Step 2: Build project
+dotnet build
+
+# Step 3: Install Playwright browsers (one-time setup)
+pwsh bin/Debug/net8.0/playwright.ps1 install chromium
+
+# Step 4: Run tests
+dotnet test PlaywrightTests.csproj --logger "trx;LogFileName=TestResults.trx" --logger "html;LogFileName=TestResults.html" --verbosity normal --settings test.runsettings
+```tructionsNET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Playwright](https://img.shields.io/badge/Playwright-1.47.0-green.svg)](https://playwright.dev/)
 [![NUnit](https://img.shields.io/badge/NUnit-4.2.2-blue.svg)](https://nunit.org/)
 
 A comprehensive .NET 8 Playwright automation project that tests the [SnipeIT demo application](https://develop.snipeitapp.com/) using modern C# practices and industry-standard test automation patterns.
 
+**🎯 Quick Start**: Just run `.\run-tests.ps1` and everything is automated!
+
 ## 🚀 Features
 
+- **One-Command Setup**: Fully automated installation and execution
 - **Sequential Test Execution**: Tests run in order without requiring repeated logins
 - **Video Recording**: All test executions are recorded for debugging
 - **Test Reports**: Generates both TRX and HTML test reports
 - **Page Object Model**: Clean, maintainable code structure
 - **Cross-browser Support**: Built on Playwright for reliable browser automation
+- **Zero Manual Setup**: Scripts handle all dependencies automatically
 
 ## 📋 Prerequisites
 
@@ -59,17 +102,19 @@ Use the provided scripts for the best experience:
 
 **Windows PowerShell/Command Prompt:**
 ```bash
-# PowerShell
+# PowerShell (Recommended - handles everything automatically)
 .\run-tests.ps1
 
 # Command Prompt
 run-tests.bat
 ```
 
-**Cross-platform:**
+**Cross-platform (Manual):**
 ```bash
 dotnet test PlaywrightTests.csproj --logger "trx;LogFileName=TestResults.trx" --logger "html;LogFileName=TestResults.html" --verbosity normal --settings test.runsettings
 ```
+
+**Note**: The scripts handle all setup automatically including NuGet restore, build, and Playwright browser installation.
 
 ### VS Code Integration
 - Press `Ctrl+Shift+P` → "Tasks: Run Task" → "Run SnipeIT Tests"
@@ -98,7 +143,7 @@ After running tests, you'll find the following artifacts:
 - Resolution: 1920x1080
 
 ### Screenshots
-- Location: `bin/Debug/net8.0/screenshots/`
+- Location: `screenshots/` (root directory)
 - Automatically captured on test failures
 - Format: PNG files with timestamp
 
@@ -114,17 +159,19 @@ Edit `Configuration/TestConfiguration.cs` to modify:
 ```
 playwright-automation/
 ├── Configuration/          # Test configuration settings
-├── Models/                 # Data models for test objects
+├── Models/                 # Data models for test objects  
 ├── Pages/                  # Page Object Model classes
 │   ├── LoginPage.cs
 │   ├── AssetsPage.cs
 │   ├── CreateAssetPage.cs
 │   └── AssetDetailsPage.cs
-├── Utils/                  # Utility classes and test data generation
 ├── TestResults/            # Generated test reports
-├── BaseTest.cs             # Base test class with setup/teardown
-├── SnipeITTests.cs         # Main test class
-└── PlaywrightTests.csproj  # Project file
+├── screenshots/            # Failure screenshots
+├── run-tests.ps1          # Automated PowerShell runner
+├── run-tests.bat          # Automated batch runner
+├── BaseTest.cs            # Base test class with setup/teardown
+├── SnipeITTests.cs        # Main test class with 7 tests
+└── PlaywrightTests.csproj # Project file
 ```
 
 **Happy Testing!** 🚀
