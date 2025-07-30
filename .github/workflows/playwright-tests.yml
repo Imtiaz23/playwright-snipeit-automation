@@ -27,7 +27,6 @@ jobs:
       
     - name: Install Playwright Browsers
       run: |
-        cd src/PlaywrightAutomation
         dotnet build
         pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
         
@@ -46,14 +45,14 @@ jobs:
       if: failure()
       with:
         name: playwright-screenshots
-        path: tests/PlaywrightAutomation.Tests/bin/Debug/net8.0/screenshots/
+        path: bin/Debug/net8.0/screenshots/
         
     - name: Upload Videos
       uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: playwright-videos
-        path: tests/PlaywrightAutomation.Tests/bin/Debug/net8.0/videos/
+        path: bin/Debug/net8.0/videos/
 
   build-windows:
     timeout-minutes: 60
@@ -75,7 +74,6 @@ jobs:
       
     - name: Install Playwright Browsers
       run: |
-        cd src/PlaywrightAutomation
         dotnet build
         pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
         
