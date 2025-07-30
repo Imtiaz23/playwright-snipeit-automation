@@ -5,7 +5,6 @@ using NUnit.Framework;
 using FluentAssertions;
 using Microsoft.Playwright;
 using PlaywrightAutomation.Pages;
-using PlaywrightAutomation.Utils;
 using PlaywrightAutomation.Models;
 
 namespace PlaywrightAutomation;

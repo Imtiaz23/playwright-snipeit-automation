@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
-  <TestRunParameters>
-    <Parameter name="webAppUrl" value="https://demo.snipeitapp.com" />
-    <Parameter name="username" value="admin" />
-    <Parameter name="password" value="password" />
-  </TestRunParameters>
-  
   <RunConfiguration>
     <MaxCpuCount>1</MaxCpuCount>
     <ResultsDirectory>.\TestResults</ResultsDirectory>
